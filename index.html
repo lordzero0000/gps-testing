@@ -1,0 +1,94 @@
+    <!--<!DOCTYPE html>
+    <html>
+    <head>
+    <title>Page Title</title>
+    <meta charset="ISO-8859-1">
+    </head>
+    <body>
+    <div id="tripmeter">
+    <p id="compatibility">
+
+    </p>
+    <p>
+        Starting Location (lat, lon):<br/>
+        <span id="startLat"></span>, <span id="startLon"></span>
+    </p>
+    <p>
+        Current Location (lat, lon):<br/>
+        <span id="currentLat"></span> <span id="currentLon"></span>
+    </p>
+    <p>
+        Distance from starting location:<br/>
+        <span id="distance">0</span> km
+    </p>
+    </div>
+
+    </body>
+    </html>
+
+
+    <script>
+    if (navigator.geolocation) {
+        document.getElementById('compatibility').innerHTML = 'Geolocation is supported!';
+    }
+    else {
+    document.getElementById('compatibility').innerHTML = 'Geolocation is not supported for this Browser/OS version yet.';
+    }
+
+    window.onload = function() {
+    var startPos;
+    navigator.geolocation.getCurrentPosition(function(position) {
+        startPos = position;
+        document.getElementById('startLat').innerHTML = startPos.coords.latitude;
+        document.getElementById('startLon').innerHTML = startPos.coords.longitude;
+    });
+    };
+    </script>-->
+    <!DOCTYPE html>
+<html>
+<body>
+<p id="demo">Click the button to get your coordinates:</p>
+<button onclick="getLocation()">Try It</button>
+<script>
+var x=document.getElementById("demo");
+function getLocation()
+  {
+  if (navigator.geolocation)
+    {
+        navigator.geolocation.getCurrentPosition(showPosition,showError,
+          {
+            enableHighAccuracy : true,
+            timeout : 10000, // 10s
+            //maximumAge : 0
+          }
+        );
+    }
+  else{x.innerHTML="Geolocation is not supported by this browser.";}
+  }
+function showPosition(position)
+  {
+  x.innerHTML="Latitude: " + position.coords.latitude + 
+  "<br>Longitude: " + position.coords.longitude;    
+  }
+function showError(error)
+  {
+  switch(error.code) 
+    {
+    case error.PERMISSION_DENIED:
+      x.innerHTML="User denied the request for Geolocation."
+      break;
+    case error.POSITION_UNAVAILABLE:
+      x.innerHTML="Location information is unavailable."
+      break;
+    case error.TIMEOUT:
+      x.innerHTML="The request to get user location timed out."
+      break;
+    case error.UNKNOWN_ERROR:
+      x.innerHTML="An unknown error occurred."
+      break;
+    }
+  }
+</script>
+
+</body>
+</html>

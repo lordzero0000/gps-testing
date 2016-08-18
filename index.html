@@ -13,13 +13,13 @@
         s4() + '-' + s4() + s4() + s4();
     }
 
-    
+
     angular.module('registerRooms', [])
     .controller('mainController', ['$scope', function($scope) {
       $scope.rooms = [];
       $scope.room = {};
       $scope.isloading = false;
-      
+
       $scope.register = function(){
         $scope.isloading = true;
          navigator.geolocation.getCurrentPosition(function(position) {
@@ -38,7 +38,18 @@
         });
       }
 
-      
+      $scope.download =  function () {
+        console.log("Fetching data...");
+        var json = JSON.stringify($scope.rooms),
+            blob = new Blob([json], {type: "application/json"}),
+            url  = URL.createObjectURL(blob),
+            a    = document.createElement('a');
+        a.download    = "rooms.json";
+        a.href        = url;
+        a.textContent = "Download rooms.json";
+        document.getElementById('link-container').appendChild(a);
+      }
+
   }]);
 </script>
   <style>
@@ -79,6 +90,8 @@
           <img src="loading.gif"/>
         </div>
       </form>
+      <input type="button" data-ng-click="download()" value="Save file" />
+      <div id="link-container"></div>
       <pre>{{rooms | json}}</pre>
     </div>
   </fieldset>

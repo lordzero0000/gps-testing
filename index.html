@@ -1,94 +1,80 @@
-    <!--<!DOCTYPE html>
-    <html>
-    <head>
-    <title>Page Title</title>
-    <meta charset="ISO-8859-1">
-    </head>
-    <body>
-    <div id="tripmeter">
-    <p id="compatibility">
+<!DOCTYPE html>
 
-    </p>
-    <p>
-        Starting Location (lat, lon):<br/>
-        <span id="startLat"></span>, <span id="startLon"></span>
-    </p>
-    <p>
-        Current Location (lat, lon):<br/>
-        <span id="currentLat"></span> <span id="currentLon"></span>
-    </p>
-    <p>
-        Distance from starting location:<br/>
-        <span id="distance">0</span> km
-    </p>
-    </div>
-
-    </body>
-    </html>
-
-
-    <script>
-    if (navigator.geolocation) {
-        document.getElementById('compatibility').innerHTML = 'Geolocation is supported!';
-    }
-    else {
-    document.getElementById('compatibility').innerHTML = 'Geolocation is not supported for this Browser/OS version yet.';
+<head>
+  <script src="angular.min.js"></script>
+  <script>
+    function guid() {
+      function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+          .toString(16)
+          .substring(1);
+      }
+      return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+        s4() + '-' + s4() + s4() + s4();
     }
 
-    window.onload = function() {
-    var startPos;
-    navigator.geolocation.getCurrentPosition(function(position) {
-        startPos = position;
-        document.getElementById('startLat').innerHTML = startPos.coords.latitude;
-        document.getElementById('startLon').innerHTML = startPos.coords.longitude;
-    });
-    };
-    </script>-->
-    <!DOCTYPE html>
-<html>
-<body>
-<p id="demo">Click the button to get your coordinates:</p>
-<button onclick="getLocation()">Try It</button>
-<script>
-var x=document.getElementById("demo");
-function getLocation()
-  {
-  if (navigator.geolocation)
-    {
-        navigator.geolocation.getCurrentPosition(showPosition,showError,
-          {
-            enableHighAccuracy : true,
-            timeout : 10000, // 10s
-            //maximumAge : 0
-          }
-        );
-    }
-  else{x.innerHTML="Geolocation is not supported by this browser.";}
-  }
-function showPosition(position)
-  {
-  x.innerHTML="Latitude: " + position.coords.latitude + 
-  "<br>Longitude: " + position.coords.longitude;    
-  }
-function showError(error)
-  {
-  switch(error.code) 
-    {
-    case error.PERMISSION_DENIED:
-      x.innerHTML="User denied the request for Geolocation."
-      break;
-    case error.POSITION_UNAVAILABLE:
-      x.innerHTML="Location information is unavailable."
-      break;
-    case error.TIMEOUT:
-      x.innerHTML="The request to get user location timed out."
-      break;
-    case error.UNKNOWN_ERROR:
-      x.innerHTML="An unknown error occurred."
-      break;
-    }
-  }
+    
+    angular.module('registerRooms', [])
+    .controller('mainController', ['$scope', function($scope) {
+      $scope.rooms = [];
+      $scope.room = {};
+      $scope.position
+      
+      $scope.register = function(){
+         navigator.geolocation.getCurrentPosition(function(position) {
+          console.log(position.coords.latitude + " , " + position.coords.longitude);
+          $scope.$apply(function(){
+            $scope.rooms.push({
+                id:guid(),
+                name:$scope.room.name,
+                floor:$scope.room.floor,
+                lat:position.coords.latitude,
+                lon:position.coords.longitude
+              }
+            );
+          });
+        });
+      }
+
+      
+  }]);
 </script>
+  <style>
+    .error {
+      color: red;
+      border: solid 1px red;
+      padding: 5px;
+    }
+  </style>
+</head>
+<html>
 
+<body>
+  <div id="loc"></div>
+
+  <fieldset data-ng-app="registerRooms">
+    <legend>Register Room</legend>
+    <div data-ng-controller="mainController">
+      <form name="form" class="css-form" novalidate>
+        Name:
+        <input type="text" data-ng-model="room.name" name="rName" required="" />
+        <br />
+        <div data-ng-show="form.$submitted || form.rName.$touched">
+          <div class="error" data-ng-show="form.rName.$error.required">without name i do not register anything OK!!!!.</div>
+        </div>
+        floor:
+        <br />
+        <input type="radio" name="rfloor" data-ng-model="room.floor" value="1" data-ng-required="!room.floor" />firts
+        <input type="radio" name="rfloor" data-ng-model="room.floor" value="2" data-ng-required="!room.floor" />second
+        <br />
+        <div data-ng-show="form.$submitted || form.rfloor.$touched">
+          <div class="error" data-ng-show="form.rfloor.$error.required">without a floor i do not work!!!!.</div>
+        </div>
+        <input type="submit" data-ng-click="register(room)" value="Save" />
+      </form>
+      <pre>{{rooms | json}}</pre>
+    </div>
+  </fieldset>
 </body>
+
 </html>

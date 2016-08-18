@@ -18,7 +18,7 @@
     .controller('mainController', ['$scope', function($scope) {
       $scope.rooms = [];
       $scope.room = {};
-      $scope.position
+      $scope.isloading = false;
       
       $scope.register = function(){
          navigator.geolocation.getCurrentPosition(function(position) {
@@ -32,6 +32,7 @@
                 lon:position.coords.longitude
               }
             );
+            $scope.isloading = true;
           });
         });
       }
@@ -70,7 +71,12 @@
         <div data-ng-show="form.$submitted || form.rfloor.$touched">
           <div class="error" data-ng-show="form.rfloor.$error.required">without a floor i do not work!!!!.</div>
         </div>
-        <input type="submit" data-ng-click="register(room)" value="Save" />
+        <div data-ng-hide="isloading">
+          <input type="submit" data-ng-click="register(room)" value="Save" />
+        </div>
+        <div data-ng-show="isloading">
+          <img src="loading.gif"/>
+        </div>
       </form>
       <pre>{{rooms | json}}</pre>
     </div>
